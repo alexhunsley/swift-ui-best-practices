@@ -50,19 +50,27 @@ struct ContentView: View {
 //            let m0 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 0)
 //            let m0 = MetricsSelector<Metrics<CGFloat>, CGFloat>(metrics: MetricsOuter.Metrics(), index: 0)
             
-            let mets = Metrics()
-
-            let lookup0 = mets.layout(\.vertPadding)
-            print("Lookup: \(lookup0)")
 
 //
 //            let m1 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 1)
 //            let lookup1 = m1(\.vertPadding)
 //            print("Lookup: \(lookup1)")
 
-            let mc = MetricsSelector<Metrics.Colors<Color>, Color>(metrics: Metrics.Colors(), index: 1)
-            let lookup2 = mc(\.textColor)
+            let mc = MetricsSelector<Metrics.ColorsX, Color>(metrics: Metrics.ColorsX(), index: 0)
+            let lookup2 = mc(\.myColor)
             print("Lookup: \(lookup2)")
+
+
+            // proper test here:
+            let mets = Metrics(index: 1)
+            let layout = mets.layout
+            let color = mets.colors2
+
+            let vertPadding = layout(\.vertPadding)
+            print("vertPadding: \(vertPadding)")
+
+            let textColor = color(\.myColor)
+            print("textColor: \(textColor)")
         }
     }
 
@@ -70,18 +78,25 @@ struct ContentView: View {
     typealias MetricsStorage<T> = [T]
 
     struct Metrics {
-        let layout = MetricsSelector<Layout<CGFloat>, CGFloat>(metrics: Metrics.Layout(), index: 0)
-        let color = MetricsSelector<Colors<Color>, CGFloat>(metrics: Metrics.Colors(), index: 0)
+        // use typealias here? to reduce need to mention CGFloat....?
+        // TODO make these in init, which takes the index we want to use.
+        let layout: MetricsSelector<Layout, CGFloat> //(metrics: Metrics.Layout(), index: 0)
+        let colors2: MetricsSelector<ColorsX, Color> //(metrics: Metrics.ColorsX(), index: 0)
 
-        struct Layout<T> {
-            // without the annoation, this bit compiles, but the references
+        init(index: Int) {
+            layout = .init(metrics: Metrics.Layout(), index: index)
+            colors2 = .init(metrics: Metrics.ColorsX(), index: index)
+        }
+
+        struct Layout {
+            // Without the annoation, this bit compiles, but the references
             // to it can't see the type.
             let horizPadding: MetricsStorage<CGFloat> = [10.0]
             let vertPadding: MetricsStorage<CGFloat> = [20.0, 60.0]
         }
 
-        struct Colors<T> {
-            let textColor: MetricsStorage<Color> = [Color.yellow, Color.green]
+        struct ColorsX {
+            let myColor: MetricsStorage<Color> = [Color.yellow, Color.green]
         }
     }
 
