@@ -31,37 +31,44 @@ struct ContentView: View {
             //
 
             // new stuff
-            let mm = Metrics()
-            print(mm)
+//            let mm = Metrics()
+//            print(mm)
 
-            let k: KeyPath<Metrics, MetricsStorage> = \.horizPadding
-            print("Keypath = \(k)")
-            print("Value at m.keypath = \(mm[keyPath: k])")
+//            let k: KeyPath<Metrics<CGFloat>, MetricsStorageCGFloat> = \.horizPadding
 
-            let k2: KeyPath<Metrics, MetricsStorage> = \.vertPadding
-            print("Keypath = \(k2)")
-            print("Value at m.keypath = \(mm[keyPath: k2])")
 
-            let m0 = MetricsSelector(metrics: Metrics(), index: 0)
+//            print("Keypath = \(k)")
+//            print("Value at m.keypath = \(mm[keyPath: k])")
+//
+//            let k2: KeyPath<Metrics, MetricsStorage> = \.vertPadding
+//            print("Keypath = \(k2)")
+//            print("Value at m.keypath = \(mm[keyPath: k2])")
+//
+            let m0 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 0)
             let lookup0 = m0(\.vertPadding)
             print("Lookup: \(lookup0)")
-
-            let m1 = MetricsSelector(metrics: Metrics(), index: 1)
+//
+            let m1 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 1)
             let lookup1 = m1(\.vertPadding)
             print("Lookup: \(lookup1)")
         }
     }
 
     // new stuff
-    typealias MetricsStorage = [CGFloat]
+    typealias MetricsStorage<T> = [T]
+
+//    let c = CGFloat(1.0)
 
     struct Metrics {
-        let horizPadding: MetricsStorage = [10.0]
-        let vertPadding: MetricsStorage = [20.0, 60.0]
+//        let horizPadding: MetricsStorage<CGFloat> = [10.0]
+//        let vertPadding: MetricsStorage<CGFloat> = [20.0, 60.0]
+
+        let horizPadding: MetricsStorage<CGFloat> = [10.0]
+        let vertPadding: MetricsStorage<CGFloat> = [20.0, 60.0]
     }
 
 //    struct MetricsSelector<T> {
-    struct MetricsSelector {
+    struct MetricsSelector<T> {
         let metrics: Metrics
         let index: Int
 
@@ -78,7 +85,7 @@ struct ContentView: View {
 //            metrics[keyPath: keyPath][index]
 //        }
 
-        func callAsFunction(_ keyPath: KeyPath<Metrics, MetricsStorage>) -> CGFloat {
+        func callAsFunction(_ keyPath: KeyPath<Metrics, MetricsStorage<CGFloat>>) -> CGFloat {
             metrics[keyPath: keyPath][index]
         }
     }
