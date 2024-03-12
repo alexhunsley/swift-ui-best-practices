@@ -112,6 +112,8 @@ struct ContentView: View {
 //        }
 
 //        func callAsFunction(_ keyPath: KeyPath<T, MetricsStorage<CGFloat>>) -> CGFloat {
+        // simpler with array as below? :
+//        func callAsFunction(_ keyPath: KeyPath<M, [T]>) -> T {
         func callAsFunction(_ keyPath: KeyPath<M, MetricsStorage<T>>) -> T {
             metrics[keyPath: keyPath][index]
         }
