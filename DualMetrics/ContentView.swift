@@ -50,7 +50,9 @@ struct ContentView: View {
 //            let m0 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 0)
 //            let m0 = MetricsSelector<Metrics<CGFloat>, CGFloat>(metrics: MetricsOuter.Metrics(), index: 0)
             
-            let lookup0 = MetricsOuter().m0(\.vertPadding)
+            let mets = Metrics()
+
+            let lookup0 = mets.layout(\.vertPadding)
             print("Lookup: \(lookup0)")
 
 //
@@ -58,7 +60,7 @@ struct ContentView: View {
 //            let lookup1 = m1(\.vertPadding)
 //            print("Lookup: \(lookup1)")
 
-            let mc = MetricsSelector<MetricsOuter.ColorMetrics<Color>, Color>(metrics: MetricsOuter.ColorMetrics(), index: 1)
+            let mc = MetricsSelector<Metrics.Colors<Color>, Color>(metrics: Metrics.Colors(), index: 1)
             let lookup2 = mc(\.textColor)
             print("Lookup: \(lookup2)")
         }
@@ -67,17 +69,18 @@ struct ContentView: View {
     // new stuff
     typealias MetricsStorage<T> = [T]
 
-    struct MetricsOuter {
-        let m0 = MetricsSelector<Metrics<CGFloat>, CGFloat>(metrics: MetricsOuter.Metrics(), index: 0)
+    struct Metrics {
+        let layout = MetricsSelector<Layout<CGFloat>, CGFloat>(metrics: Metrics.Layout(), index: 0)
+        let color = MetricsSelector<Colors<Color>, CGFloat>(metrics: Metrics.Colors(), index: 0)
 
-        struct Metrics<T> {
+        struct Layout<T> {
             // without the annoation, this bit compiles, but the references
             // to it can't see the type.
             let horizPadding: MetricsStorage<CGFloat> = [10.0]
             let vertPadding: MetricsStorage<CGFloat> = [20.0, 60.0]
         }
 
-        struct ColorMetrics<T> {
+        struct Colors<T> {
             let textColor: MetricsStorage<Color> = [Color.yellow, Color.green]
         }
     }
