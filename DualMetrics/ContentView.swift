@@ -44,13 +44,21 @@ struct ContentView: View {
 //            print("Keypath = \(k2)")
 //            print("Value at m.keypath = \(mm[keyPath: k2])")
 //
-            let m0 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 0)
+
+            // TODO get the index from the environment, which in turn comes from notch detection etc.
+            //
+//            let m0 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 0)
+            let m0 = MetricsSelector<Metrics<CGFloat>, CGFloat>(metrics: Metrics(), index: 0)
             let lookup0 = m0(\.vertPadding)
             print("Lookup: \(lookup0)")
 //
-            let m1 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 1)
-            let lookup1 = m1(\.vertPadding)
-            print("Lookup: \(lookup1)")
+//            let m1 = MetricsSelector<CGFloat>(metrics: Metrics(), index: 1)
+//            let lookup1 = m1(\.vertPadding)
+//            print("Lookup: \(lookup1)")
+
+            let mc = MetricsSelector<ColorMetrics<Color>, Color>(metrics: ColorMetrics(), index: 1)
+            let lookup2 = mc(\.textColor)
+            print("Lookup: \(lookup2)")
         }
     }
 
@@ -59,17 +67,35 @@ struct ContentView: View {
 
 //    let c = CGFloat(1.0)
 
-    struct Metrics {
+    struct Metrics<T> {
+//        typealias T = CGFloat
+
 //        let horizPadding: MetricsStorage<CGFloat> = [10.0]
 //        let vertPadding: MetricsStorage<CGFloat> = [20.0, 60.0]
 
+        // without the annoation, this bit compiles, but the references
+        // to it can't see the type.
         let horizPadding: MetricsStorage<CGFloat> = [10.0]
         let vertPadding: MetricsStorage<CGFloat> = [20.0, 60.0]
+
+        // could have e.g. colours in here.
+        // OR a seperate metrics obj entirely.
+        // Quite like idea of in here....
+//        struct Colors {
+//            let textColor: MetricsStorage<Color> = [Color.yellow, Color.green]
+//        }
     }
 
-//    struct MetricsSelector<T> {
-    struct MetricsSelector<T> {
-        let metrics: Metrics
+    struct ColorMetrics<T> {
+//        typealias T = Color
+        let textColor: MetricsStorage<Color> = [Color.yellow, Color.green]
+    }
+
+    // M = metric type (struct)
+    // T = type stored (CGFloat, Color, etc)
+    struct MetricsSelector<M, T> {
+//    struct MetricsSelector { //}<T> {
+        let metrics: M
         let index: Int
 
 //        var data: [T]
@@ -85,7 +111,8 @@ struct ContentView: View {
 //            metrics[keyPath: keyPath][index]
 //        }
 
-        func callAsFunction(_ keyPath: KeyPath<Metrics, MetricsStorage<CGFloat>>) -> CGFloat {
+//        func callAsFunction(_ keyPath: KeyPath<T, MetricsStorage<CGFloat>>) -> CGFloat {
+        func callAsFunction(_ keyPath: KeyPath<M, MetricsStorage<T>>) -> T {
             metrics[keyPath: keyPath][index]
         }
     }
