@@ -12,14 +12,28 @@ import SwiftUI
 // [ ] make our own padding variant (modifier) that takes a keypath.
 //
 
+// So maye the GeometryProxy can have the layout passed in to the
+
 struct ContentView: View {
     // top level View: make layout for the environment
     // TODO get proper index
-    @StateObject var layout = Metrics(index: 0).layout
+    // Probably don't need state object here at all, actually! We don't care about that.
+    //@StateObject
+//    var layout = Metrics(index: UIDevice.current.isNotchedDevice ? 0 : 1).layout
+
+    // do need stateObject, to be able to mutate!
+    @StateObject var layout: MetricsSelector<any Layout>
 
     var body: some View {
 //        let mets = Metrics(index: 0)
 //        let layout = mets.layout
+
+        // so we need to defer getting the actual layout for index until in the loopy bit.
+        // TODO use geometry proxy here, and call metrics.layout(forIndex: 0/1) here based on notched?
+        let layout = Metrics.layout(forIndex: 0) // use notch!
+
+        // but how do I now set this on the environment below? Can only get hands on it in the body/geometryproxy.
+        // OK, need to pass around the metrics pre-Layout call... <<<---------------------------
 
         VStack {
             Image(systemName: "globe")
@@ -71,10 +85,14 @@ struct SubComponentView: View {
     typealias MetricsStorage = [MetricType]
 
     struct Metrics {
-        let layout: MetricsSelector<Layout>
+//        let layout: MetricsSelector<Layout>
 
-        init(index: Int) {
-            layout = .init(metrics: Metrics.Layout(), index: index)
+//        init(index: Int) {
+//            layout = .init(metrics: Metrics.Layout(), index: index)
+//        }
+
+        static func layout(forIndex index: Int) -> MetricsSelector<Layout> {
+            MetricsSelector(metrics: Metrics.Layout(), index: index)
         }
 
         struct Layout {
@@ -84,7 +102,7 @@ struct SubComponentView: View {
     }
 
     // We must use a class because we have to be ObservableObject
-    // per environment requirements.
+    // per requirements for using Environment.
     // This class is not inteneded to update layout dyamically, though,
     // so we don't need any published properties
     // M = metric type
@@ -105,7 +123,18 @@ struct SubComponentView: View {
     }
 //}
 
+extension UIDevice {
+    /// Returns `true` if the device has a notch
+    var isNotchedDevice: Bool {
+        guard #available(iOS 11.0, *), let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else { return false }
+        if UIDevice.current.orientation.isPortrait {
+            return window.safeAreaInsets.top >= 44
+        } else {
+            return window.safeAreaInsets.left > 0 || window.safeAreaInsets.right > 0
+        }
+    }
+}
+
 #Preview {
     ContentView()
 }
-
