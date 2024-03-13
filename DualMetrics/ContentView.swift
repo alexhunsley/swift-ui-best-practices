@@ -18,8 +18,8 @@ struct ContentView: View {
     @StateObject var layout = Metrics(index: 0).layout
 
     var body: some View {
-        let mets = Metrics(index: 0)
-        let layout = mets.layout
+//        let mets = Metrics(index: 0)
+//        let layout = mets.layout
 
         VStack {
             Image(systemName: "globe")
@@ -78,7 +78,7 @@ struct SubComponentView: View {
         }
 
         struct Layout {
-            let horizPadding: MetricsStorage = [100.0]
+            let horizPadding: MetricsStorage = [100.0, 50.0]
             let vertPadding: MetricsStorage = [60.0, 20.0]
         }
     }
@@ -98,7 +98,9 @@ struct SubComponentView: View {
         }
 
         func callAsFunction(_ keyPath: KeyPath<M, MetricsStorage>) -> MetricType {
-            metrics[keyPath: keyPath][index]
+            let metricsForKeypath = metrics[keyPath: keyPath] //[index]
+            let selectedIndex = index < metricsForKeypath.count ? index : 0
+            return metricsForKeypath[selectedIndex]
         }
     }
 //}
