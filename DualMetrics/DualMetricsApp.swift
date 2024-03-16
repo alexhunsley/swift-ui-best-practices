@@ -82,8 +82,15 @@ class DualMetricsAppEngine: ObservableObject {
 
     func modelUpdated(_ appData: AppModelThatSwiftUIWantsDataFrom) {
         print("LOG Enter model updated: \(appData)")
-        userInfoViewModelProvider.userInfoViewModel = UserInfoView.UserInfoViewModel(name: appData.name, age: appData.age)
-        radioactivityViewModelProvider.radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: appData.isRadioactive)
+//        userInfoViewModelProvider.userInfoViewModel = UserInfoView.UserInfoViewModel(name: appData.name, age: appData.age)
+        // forcing false every time, still get updates.
+//        radioactivityViewModelProvider.radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false) //appData.isRadioactive)
+
+        // even this causes a rerender!
+//        radioactivityViewModelProvider.radioactivityViewModel.isRadioactive = false //RadioactivityView.RadioactivityViewModel(isRadioactive: false) //appData.isRadioactive)
+
+        // so this at least works - we don't see any updates
+        radioactivityViewModelProvider.updateModel(newModel: RadioactivityView.RadioactivityViewModel(isRadioactive: false))
         print("LOG ... exit model updated")
     }
 }

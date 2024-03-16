@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+// ah. I think the issue is that I'm using the provider itself, and not just getting the struct out?
+
+
 // Example sub-component.
 // So we can test environemnt for picking up the metrics
 struct RadioactivityView: View {
@@ -58,6 +61,13 @@ extension RadioactivityView {
 
         init(_ radioactivityViewModel: RadioactivityViewModel) {
             self.radioactivityViewModel = radioactivityViewModel
+        }
+
+        // try a nasty updateModel thing: 
+        func updateModel(newModel: RadioactivityViewModel) {
+            if newModel.isRadioactive != radioactivityViewModel.isRadioactive {
+                radioactivityViewModel = newModel
+            }
         }
     }
 
