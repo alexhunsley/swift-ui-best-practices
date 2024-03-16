@@ -162,7 +162,8 @@ extension UserInfoView {
 extension UIDevice {
     /// Returns `true` if the device has a notch
     static var isNotchedDevice: Bool {
-        guard #available(iOS 11.0, *), let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else { return false }
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        guard #available(iOS 11.0, *), let window = windowScene?.windows.filter({$0.isKeyWindow}).first else { return false }
 //        return true
         if UIDevice.current.orientation.isPortrait {
 //            print("A: \(window.safeAreaInsets.top)")
