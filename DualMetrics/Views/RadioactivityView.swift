@@ -37,6 +37,8 @@ struct RadioactivityView: View {
 }
 
 extension RadioactivityView {
+
+    // the updateModel deduping requires Equatable
     struct RadioactivityViewModel: Equatable {
         var isRadioactive: Bool
     }

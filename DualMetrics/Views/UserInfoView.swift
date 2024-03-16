@@ -68,7 +68,7 @@ struct UserInfoView: View {
 
 extension UserInfoView {
 
-    // explicit Equatable here doesn't help
+    // the updateModel deduping requires Equatable
     struct UserInfoViewModel: Equatable {
         var name: String
         var age: Int
