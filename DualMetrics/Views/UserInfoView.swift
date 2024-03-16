@@ -53,10 +53,8 @@ struct UserInfoView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
 
-    @State var renderCount = 0
-
     var body: some View {
-        let _ = print("LOG   userView counter now \(renderCount)")
+        let _ = print("LOG_UserInfoView   Rendering body!")
 
         //        let mets = Metrics(index: 0)
 //        let layout = mets.layout
@@ -82,8 +80,6 @@ struct UserInfoView: View {
             .border(.gray)
 
             RadioactivityView()
-
-            Text("Render count: \(renderCount)")
                 // this environment object for the radioactivityViewModel *could*
                 // just get passed to everything, next to the .environmentObject at bottom,
                 // but this is somewhat nicer. But more error prone if you forget to put
@@ -91,8 +87,7 @@ struct UserInfoView: View {
 //                .environmentObject(radioactivityViewModel)
         }
         .onAppear {
-            renderCount += 1;
-            print("LOG  in userView, userInfoViewModel.name = \(userInfoViewModel.name)")
+//            print("LOG_UserInfoView  in userView, userInfoViewModel.name = \(userInfoViewModel.name)")
 //            let vertPadding = layout(\.vertPadding)
 //            print("vertPadding: \(vertPadding)")
         }

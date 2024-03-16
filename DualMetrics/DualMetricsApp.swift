@@ -31,14 +31,15 @@ struct DualMetricsApp: App {
 
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
 
-                // now change something we don't care about notice in our views.
-                // we expect no view update as a result of this
+                // now change some data we don't care about in our Views.
+                // we expect no view update as a result of this.
+                //   -- I'm seeing a view update for this! Why?
                 let aModelUpdate2 = AppModelThatSwiftUIWantsDataFrom(name: "Sue", age: 29, isRadioactive: true, address: "Another street", orderCount: 1)
                 appEngine.modelUpdated(aModelUpdate2)
 
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
 
-                // now change something we expect to see updated in SwiftUI
+                // now change something we expect to see updated in our Views
                 let aModelUpdate3 = AppModelThatSwiftUIWantsDataFrom(name: "Sue2", age: 29, isRadioactive: false, address: "Another street", orderCount: 1)
                 appEngine.modelUpdated(aModelUpdate3)
 
