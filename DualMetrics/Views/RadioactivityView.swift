@@ -37,6 +37,10 @@ struct RadioactivityView: View {
 }
 
 extension RadioactivityView {
+    struct RadioactivityViewModel: Equatable {
+        var isRadioactive: Bool
+    }
+
     class RadioactivityViewModelProvider: ObservableObject {
         // private(set) to force update via updateModel only
         @Published private(set) var radioactivityViewModel: RadioactivityViewModel
@@ -52,10 +56,6 @@ extension RadioactivityView {
                 radioactivityViewModel = newModel
             }
         }
-    }
-
-    struct RadioactivityViewModel: Equatable {
-        var isRadioactive: Bool
     }
 }
 

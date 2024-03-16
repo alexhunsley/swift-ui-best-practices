@@ -51,11 +51,9 @@ struct UserInfoView: View {
             .border(.gray)
 
             RadioactivityView()
-                // this environment object for the radioactivityViewModel *could*
-                // just get passed to everything, next to the .environmentObject at bottom,
-                // but this is somewhat nicer. But more error prone if you forget to put
-                // it somewhere!
-//                .environmentObject(radioactivityViewModel)
+            // We just pass our env modelViews to *everything* (see further down).
+            // Can't forget, this way.
+            //                .environmentObject(radioactivityViewModel)
         }
         .onAppear {
 //            print("LOG_UserInfoView  in userView, userInfoViewModel.name = \(userInfoViewModel.name)")
@@ -69,9 +67,16 @@ struct UserInfoView: View {
 }
 
 extension UserInfoView {
+
+    // explicit Equatable here doesn't help
+    struct UserInfoViewModel: Equatable {
+        var name: String
+        var age: Int
+    }
+
     // MainModel for this SwiftUI view. Or of course, the modelProvider protocol,
-    // which avoieds writing @Published on everything,
-    // but which would update on aboslutely everything
+    // which avoids writing @Published on everything,
+    // but which would update on absolutely everything
     // (defo an issue with what we do now!) -- this is
     // another reasonn to not use main app models directly -
     // you possibly over-render your view -- anyhting changing
@@ -96,12 +101,6 @@ extension UserInfoView {
                 userInfoViewModel = newModel
             }
         }
-    }
-
-    // explicit Equatable here doesn't help
-    struct UserInfoViewModel: Equatable {
-        var name: String
-        var age: Int
     }
 }
 
