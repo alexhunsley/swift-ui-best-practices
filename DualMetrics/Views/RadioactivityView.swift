@@ -42,7 +42,9 @@ struct RadioactivityView: View {
     // MARK: - Body
 
     var body: some View {
-        Text(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
+        let viewModel = radioactivityViewModelProvider.radioactivityViewModel
+
+        Text(viewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
             .frame(maxWidth: radioactivityLayout(\.subCompIndicatorWidth))
         // TODO get the model from the provider!
             .background(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? .red : .green)
@@ -51,6 +53,7 @@ struct RadioactivityView: View {
 
 extension RadioactivityView {
     class RadioactivityViewModelProvider: ObservableObject {
+        // wrapped model defo needs to be published!
         @Published var radioactivityViewModel: RadioactivityViewModel
 
         init(_ radioactivityViewModel: RadioactivityViewModel) {

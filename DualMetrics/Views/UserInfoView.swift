@@ -55,6 +55,12 @@ struct UserInfoView: View {
 
     var body: some View {
         let _ = print("LOG_UserInfoView   Rendering body!")
+        // cam't see this log anywhere!
+//        let _ = Self._logChanges()
+        let _ = Self._printChanges()
+
+        let userInfoViewModel = userInfoViewModelProvider.userInfoViewModel
+        let radioactivityViewModel = radioactivityViewModelProvider.radioactivityViewModel
 
         //        let mets = Metrics(index: 0)
 //        let layout = mets.layout
@@ -70,10 +76,10 @@ struct UserInfoView: View {
         VStack { //}(spacing: layout(\.mainStackSpacing)) {
             VStack(spacing: 20) {
                 HStack {
-                    Text("Name: \(userInfoViewModelProvider.userInfoViewModel.name)")
+                    Text("Name: \(userInfoViewModel.name)")
                 }
                 HStack {
-                    Text("Age: \(userInfoViewModelProvider.userInfoViewModel.age)")
+                    Text("Age: \(userInfoViewModel.age)")
                 }
             }
             .padding(userInfoLayout(\.userInfoBoxPadding))
@@ -116,6 +122,7 @@ extension UserInfoView {
     // the SwiftUI model with the values. This way we don't
     // re-render if the SwiftUI model itself doesn't change any values.
     class UserInfoViewModelProvider: ObservableObject {
+        // wrapped model defo needs to be published!
         @Published var userInfoViewModel: UserInfoViewModel
 
         init(_ userInfoViewModel: UserInfoViewModel) {
