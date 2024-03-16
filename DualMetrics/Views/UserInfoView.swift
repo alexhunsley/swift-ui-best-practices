@@ -34,8 +34,8 @@ struct UserInfoView: View {
     //@StateObject
 //    var layout = Metrics(index: UIDevice.current.isNotchedDevice ? 0 : 1).layout
 
-    // do need stateObject, to be able to mutate!
-    // IMPORTANT quality this var name for your View.
+    // Must use a stateObject to be able to mutate.
+    // IMPORTANT have your view name in this layout var name;
     // It gets passed everywhere so we need to avoid clashes in sub-Views.
 
     // need to sort out this isNotched bit too!
@@ -53,8 +53,12 @@ struct UserInfoView: View {
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
 
+    @State var renderCount = 0
+
     var body: some View {
-//        let mets = Metrics(index: 0)
+        let _ = print("LOG   userView counter now \(renderCount)")
+
+        //        let mets = Metrics(index: 0)
 //        let layout = mets.layout
 
         // so we need to defer getting the actual layout for index until in the loopy bit.
@@ -78,17 +82,22 @@ struct UserInfoView: View {
             .border(.gray)
 
             RadioactivityView()
+
+            Text("Render count: \(renderCount)")
                 // this environment object for the radioactivityViewModel *could*
                 // just get passed to everything, next to the .environmentObject at bottom,
                 // but this is somewhat nicer. But more error prone if you forget to put
                 // it somewhere!
-                .environmentObject(radioactivityViewModel)
+//                .environmentObject(radioactivityViewModel)
         }
         .onAppear {
+            renderCount += 1;
+            print("LOG  in userView, userInfoViewModel.name = \(userInfoViewModel.name)")
 //            let vertPadding = layout(\.vertPadding)
 //            print("vertPadding: \(vertPadding)")
         }
         .environmentObject(userInfoLayout)
+        .environmentObject(radioactivityViewModel)
     }
 
     // temp -- just for now
