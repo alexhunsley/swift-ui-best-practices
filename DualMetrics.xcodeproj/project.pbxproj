@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9AFEC3B62BA0F6AB00D10FE5 /* DualMetricsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B52BA0F6AB00D10FE5 /* DualMetricsApp.swift */; };
-		9AFEC3B82BA0F6AB00D10FE5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B72BA0F6AB00D10FE5 /* ContentView.swift */; };
+		9AFEC3B82BA0F6AB00D10FE5 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B72BA0F6AB00D10FE5 /* UserInfoView.swift */; };
 		9AFEC3BA2BA0F6AC00D10FE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B92BA0F6AC00D10FE5 /* Assets.xcassets */; };
 		9AFEC3BD2BA0F6AC00D10FE5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AFEC3BC2BA0F6AC00D10FE5 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -16,7 +16,7 @@
 /* Begin PBXFileReference section */
 		9AFEC3B22BA0F6AB00D10FE5 /* DualMetrics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DualMetrics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AFEC3B52BA0F6AB00D10FE5 /* DualMetricsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualMetricsApp.swift; sourceTree = "<group>"; };
-		9AFEC3B72BA0F6AB00D10FE5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9AFEC3B72BA0F6AB00D10FE5 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
 		9AFEC3B92BA0F6AC00D10FE5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9AFEC3BC2BA0F6AC00D10FE5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -32,6 +32,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9A29CB502BA5A64100D38955 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9AFEC3B72BA0F6AB00D10FE5 /* UserInfoView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		9AFEC3A92BA0F6AB00D10FE5 = {
 			isa = PBXGroup;
 			children = (
@@ -51,8 +59,8 @@
 		9AFEC3B42BA0F6AB00D10FE5 /* DualMetrics */ = {
 			isa = PBXGroup;
 			children = (
+				9A29CB502BA5A64100D38955 /* Views */,
 				9AFEC3B52BA0F6AB00D10FE5 /* DualMetricsApp.swift */,
-				9AFEC3B72BA0F6AB00D10FE5 /* ContentView.swift */,
 				9AFEC3B92BA0F6AC00D10FE5 /* Assets.xcassets */,
 				9AFEC3BB2BA0F6AC00D10FE5 /* Preview Content */,
 			);
@@ -137,7 +145,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9AFEC3B82BA0F6AB00D10FE5 /* ContentView.swift in Sources */,
+				9AFEC3B82BA0F6AB00D10FE5 /* UserInfoView.swift in Sources */,
 				9AFEC3B62BA0F6AB00D10FE5 /* DualMetricsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
