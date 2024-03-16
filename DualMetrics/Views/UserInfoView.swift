@@ -10,7 +10,7 @@ import SwiftUI
 // [ ] make dualMetrics more ergo: remove need to put in isLargeDesign or not (single value)? annoying!
 //         ideally not have to specify it.
 
-// if we share layout via env, fofr our own stuff, DON'T share to other folk's components!
+// if we share layout via env, for our own stuff, DON'T share to other folk's components!
 
 // Don't split out stringIds to diff file. It just slows us down if we have to rename or move things.
 
@@ -60,7 +60,7 @@ struct UserInfoView: View {
 //            let vertPadding = layout(\.vertPadding)
 //            print("vertPadding: \(vertPadding)")
         }
-        // we don't bother making layout a probider thing for layout; it's static per device type
+        // we don't bother making layout a provider thing for layout; it's static per device type
         .environmentObject(userInfoLayout)
         .environmentObject(radioactivityViewModelProvider)
     }

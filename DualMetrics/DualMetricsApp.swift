@@ -1,9 +1,9 @@
 //
-// Sample SwiftUI app to demonstrate a possible structure, particularly useful when multiple people
-// are contributing components or Views to a feature.
+// Sample SwiftUI app to demonstrate a possible structure, particularly useful with
+// multiple collaborators.
 //
 // The motive is to code stuff in an optimal way from the start, rather than
-// spending time doing SwiftUI integrations (from multuple authors) after the individual work.
+// spending time changing the way things integrate (from multiple authors) after the individual work.
 //
 import SwiftUI
 
@@ -19,6 +19,8 @@ import SwiftUI
 //
 // [ ] Bring in Metrics from SW app and compare -- have newer changes to SW app I think...
 // [ ] Look at the SW integration of Chloe's stuff - in particular, get providers for the two viewmodels being used.
+// [ ] look at getting Debanjan's stuff integrated now by doing a local-only merge of his work -- I don't expecct
+//       his interfaces to change much at this point, just internals.
 //
 // Thought for iOS chapter: some of what I/we're doing here is kind of what TCA would do nicely for us anyway
 // (and probably better) -- like composition of state.
