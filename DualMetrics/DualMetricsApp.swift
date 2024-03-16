@@ -16,6 +16,14 @@ import SwiftUI
 // Obviously the proider is a good place to handle this issue, with setter on the thing, or an updateX func
 // that checks for new value.
 
+//
+// [ ] Bring in Metrics from SW app and compare -- have newer changes to SW app I think...
+// [ ] Look at the SW integration of Chloe's stuff - in particular, get providers for the two viewmodels being used.
+//
+// Thought for iOS chapter: some of what I/we're doing here is kind of what TCA would do nicely for us anyway
+// (and probably better) -- like composition of state.
+//
+
 @main
 struct DualMetricsApp: App {
 
@@ -26,9 +34,9 @@ struct DualMetricsApp: App {
         WindowGroup {
             Group {
                 UserInfoView()
-                    .environmentObject(appEngine.userInfoViewModelProvider)
-                    .environmentObject(appEngine.radioactivityViewModelProvider)
             }
+            .environmentObject(appEngine.userInfoViewModelProvider)
+            .environmentObject(appEngine.radioactivityViewModelProvider)
             .task() {
                 try? await Task.sleep(nanoseconds: 1_000_000_000)
 
