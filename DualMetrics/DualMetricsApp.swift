@@ -8,12 +8,12 @@
 import SwiftUI
 
 // AHHH! this 'problem' is just swift acting as expected!
-// published always notifies on assignment, even if same actual value!
+// @published always notifies on assignment, even if the same actual value!
 //
 // https://stackoverflow.com/questions/65905731/does-combine-have-publishers-that-only-publish-when-a-value-actually-changes
-// does the SW app actually deal with this, when providing stuff to the views?
-// check out how they handle this thing around changing vlaues to same value again -- do they guard against that?
-// Obviously the proider is a good plae to handle this issue, with setter on the thing, or an updateX func
+// Does the SW app actually deal with this, when providing stuff to the views?
+// Check out how they handle this thing around changing vlaues to same value again -- do they guard against that?
+// Obviously the proider is a good place to handle this issue, with setter on the thing, or an updateX func
 // that checks for new value.
 
 @main

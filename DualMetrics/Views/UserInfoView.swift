@@ -28,6 +28,7 @@ struct UserInfoView: View {
 
     // VERY IMPORTANT that all these view model var names are qualified; do NOT just use 'viewModel'
     // because multiple models may in be in the @EnviromentObjects shared between Views.
+    // (A change to any of these will trigger re-render, even if a change is only in a subview of this one.)
     @EnvironmentObject var userInfoViewModelProvider: UserInfoViewModelProvider
     @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
 
