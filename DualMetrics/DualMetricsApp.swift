@@ -11,7 +11,7 @@ import SwiftUI
 struct DualMetricsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            UserInfoView()
         }
     }
 }
