@@ -56,15 +56,16 @@ struct RadioactivityView: View {
 
 extension RadioactivityView {
     class RadioactivityViewModelProvider: ObservableObject {
-        // wrapped model defo needs to be published!
-        @Published var radioactivityViewModel: RadioactivityViewModel
+        // private(set) to force update via updateModel only
+        @Published private(set) var radioactivityViewModel: RadioactivityViewModel
 
         init(_ radioactivityViewModel: RadioactivityViewModel) {
             self.radioactivityViewModel = radioactivityViewModel
         }
 
-        // try a nasty updateModel thing: 
-        func updateModel(newModel: RadioactivityViewModel) {
+        // @Published sneds onChange events on assignment -- it doesn't care if it's
+        // the same value. So this dedupes.
+        func updateModel(_ newModel: RadioactivityViewModel) {
             if newModel.isRadioactive != radioactivityViewModel.isRadioactive {
                 radioactivityViewModel = newModel
             }

@@ -122,11 +122,19 @@ extension UserInfoView {
     // the SwiftUI model with the values. This way we don't
     // re-render if the SwiftUI model itself doesn't change any values.
     class UserInfoViewModelProvider: ObservableObject {
-        // wrapped model defo needs to be published!
-        @Published var userInfoViewModel: UserInfoViewModel
+        // private(set) to force update via updateModel only
+        @Published private(set) var userInfoViewModel: UserInfoViewModel
 
         init(_ userInfoViewModel: UserInfoViewModel) {
             self.userInfoViewModel = userInfoViewModel
+        }
+
+        // @Published sneds onChange events on assignment -- it doesn't care if it's
+        // the same value. So this dedupes.
+        func updateModel(_ newModel: UserInfoViewModel) {
+            if newModel != userInfoViewModel {
+                userInfoViewModel = newModel
+            }
         }
     }
 

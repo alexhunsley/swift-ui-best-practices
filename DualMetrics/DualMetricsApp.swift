@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+// AHHH! this 'problem' is just swift acting as expected!
+// published always notifies on assignment, even if same actual value!
+//
+// https://stackoverflow.com/questions/65905731/does-combine-have-publishers-that-only-publish-when-a-value-actually-changes
+// does the SW app actually deal with this, when providing stuff to the views?
+// check out how they handle this thing around changing vlaues to same value again -- do they guard against that?
+// Obviously the proider is a good plae to handle this issue, with setter on the thing, or an updateX func
+// that checks for new value.
+
 @main
 struct DualMetricsApp: App {
 
@@ -84,13 +93,15 @@ class DualMetricsAppEngine: ObservableObject {
         print("LOG Enter model updated: \(appData)")
 //        userInfoViewModelProvider.userInfoViewModel = UserInfoView.UserInfoViewModel(name: appData.name, age: appData.age)
         // forcing false every time, still get updates.
+
 //        radioactivityViewModelProvider.radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false) //appData.isRadioactive)
 
         // even this causes a rerender!
 //        radioactivityViewModelProvider.radioactivityViewModel.isRadioactive = false //RadioactivityView.RadioactivityViewModel(isRadioactive: false) //appData.isRadioactive)
 
         // so this at least works - we don't see any updates
-        radioactivityViewModelProvider.updateModel(newModel: RadioactivityView.RadioactivityViewModel(isRadioactive: false))
+        userInfoViewModelProvider.updateModel(UserInfoView.UserInfoViewModel(name: appData.name, age: appData.age))
+        radioactivityViewModelProvider.updateModel(RadioactivityView.RadioactivityViewModel(isRadioactive: appData.isRadioactive))
         print("LOG ... exit model updated")
     }
 }
