@@ -1,10 +1,10 @@
 //
-//  DualMetricsApp.swift
-//  DualMetrics
+// Sample SwiftUI app to demonstrate a possible structure, particularly useful when multiple people
+// are contributing components or Views to a feature.
 //
-//  Created by Alex Hunsley on 12/03/2024.
+// The motive is to code stuff in an optimal way from the start, rather than
+// spending time doing SwiftUI integrations (from multuple authors) after the individual work.
 //
-
 import SwiftUI
 
 // AHHH! this 'problem' is just swift acting as expected!
@@ -66,10 +66,12 @@ struct DualMetricsApp: App {
 
 }
 
-// Model for core app.
-// This must *not* be exposed to SwiftUI because we want to:
+// Engine for core app.
+//
+// This, and its appModel, must *not* be exposed to SwiftUI because we want to:
+//
 //    * avoid over-rendering SwiftUI views
-//    * insulate swiftUI views from json/core app model churn
+//    * insulate swiftUI views from JSON/core app model churn
 //    * make SwiftUI previews more easily
 //    * have option of separating out SwiftUI previews into their own modules/SPMs etc with minimum hassle
 class DualMetricsAppEngine: ObservableObject {
@@ -100,6 +102,9 @@ class DualMetricsAppEngine: ObservableObject {
     }
 }
 
+// This represents a model in the main app that we do not want to expose
+// our SwiftUI Views to. But we do want to get data from it, so that happend
+// indirectly via SwiftUI specific view models.
 struct AppModelThatSwiftUIWantsDataFrom {
     let name: String
     let age: Int
