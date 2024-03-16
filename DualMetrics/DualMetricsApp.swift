@@ -17,8 +17,8 @@ struct DualMetricsApp: App {
         WindowGroup {
             Group {
                 UserInfoView()
-                    .environmentObject(appEngine.userInfoViewModel)
-                    .environmentObject(appEngine.radioactivityViewModel)
+                    .environmentObject(appEngine.userInfoViewModelProvider)
+                    .environmentObject(appEngine.radioactivityViewModelProvider)
             }
             .task() {
                 print("LOG onAppear entered")
@@ -64,19 +64,26 @@ class DualMetricsAppEngine: ObservableObject {
     var appModel: AppModelThatSwiftUIWantsDataFrom
 
     // The SwiftUI view models used by UserInfoView and any of its children
-    @Published var userInfoViewModel: UserInfoView.UserInfoViewModel
-    @Published var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
+    @Published var userInfoViewModelProvider: UserInfoView.UserInfoViewModelProvider
+    @Published var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
 
     init(appModel: AppModelThatSwiftUIWantsDataFrom) {
         self.appModel = appModel
-        self.userInfoViewModel = UserInfoView.UserInfoViewModel(name: appModel.name, age: appModel.age)
-        self.radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+
+        // use builder pattern here? with proxy obj? naaaah....
+        self.userInfoViewModelProvider = UserInfoView.UserInfoViewModelProvider(
+            UserInfoView.UserInfoViewModel(name: appModel.name, age: appModel.age)
+        )
+
+        self.radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
+            RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+        )
     }
 
     func modelUpdated(_ appData: AppModelThatSwiftUIWantsDataFrom) {
         print("LOG Enter model updated: \(appData)")
-        userInfoViewModel = UserInfoView.UserInfoViewModel(name: appData.name, age: appData.age)
-        radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: appData.isRadioactive)
+        userInfoViewModelProvider.userInfoViewModel = UserInfoView.UserInfoViewModel(name: appData.name, age: appData.age)
+        radioactivityViewModelProvider.radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: appData.isRadioactive)
         print("LOG ... exit model updated")
     }
 }
@@ -94,5 +101,3 @@ struct AppModelThatSwiftUIWantsDataFrom {
                                                         address: "",
                                                         orderCount: 0)
 }
-
-

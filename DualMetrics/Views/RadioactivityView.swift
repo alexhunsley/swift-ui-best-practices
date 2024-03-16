@@ -17,7 +17,7 @@ struct RadioactivityView: View {
     // this is available, but we don't need to use it in this View
 
     //    @EnvironmentObject var userInfoViewModel: UserInfoView.UserInfoViewModel
-    @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
+    @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
 
     @StateObject var radioactivityLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
 
@@ -42,15 +42,24 @@ struct RadioactivityView: View {
     // MARK: - Body
 
     var body: some View {
-        Text(radioactivityViewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
+        Text(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
             .frame(maxWidth: radioactivityLayout(\.subCompIndicatorWidth))
-            .background(radioactivityViewModel.isRadioactive ? .red : .green)
+        // TODO get the model from the provider!
+            .background(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? .red : .green)
     }
 }
 
 extension RadioactivityView {
-    class RadioactivityViewModel: ObservableObject {
-        @Published var isRadioactive: Bool
+    class RadioactivityViewModelProvider: ObservableObject {
+        @Published var radioactivityViewModel: RadioactivityViewModel
+
+        init(_ radioactivityViewModel: RadioactivityViewModel) {
+            self.radioactivityViewModel = radioactivityViewModel
+        }
+    }
+
+    struct RadioactivityViewModel {
+        var isRadioactive: Bool
 
         init(isRadioactive: Bool) {
             self.isRadioactive = isRadioactive
@@ -68,28 +77,32 @@ extension RadioactivityView {
 
         // demonstrate a state of the View
         Group {
-            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+            @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
+                RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+            )
 //
 //            Text("Hi")
 
             // Note how the viewModel is passed in via env, not via init.
             // This allows composition of views.
             RadioactivityView()
-                .environmentObject(radioactivityViewModel)
+                .environmentObject(radioactivityViewModelProvider)
         }
         Divider()
 
         // demonstrate a different state of the View
 
         Group {
-            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: true)
+            @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
+                RadioactivityView.RadioactivityViewModel(isRadioactive: true)
+            )
 //
 //            Text("Hi")
 
             // Note how the viewModel is passed in via env, not via init.
             // This allows composition of views.
             RadioactivityView()
-                .environmentObject(radioactivityViewModel)
+                .environmentObject(radioactivityViewModelProvider)
         }
     }
 }

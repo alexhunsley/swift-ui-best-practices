@@ -50,8 +50,8 @@ struct UserInfoView: View {
 
     // VERY IMPORTANT that all these view model var names are qualified; do NOT just use 'viewModel'm,
     // because multiple models may in be in the @EnviromentObjects shared between Views.
-    @EnvironmentObject var userInfoViewModel: UserInfoViewModel
-    @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
+    @EnvironmentObject var userInfoViewModelProvider: UserInfoViewModelProvider
+    @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
 
     var body: some View {
         let _ = print("LOG_UserInfoView   Rendering body!")
@@ -70,10 +70,10 @@ struct UserInfoView: View {
         VStack { //}(spacing: layout(\.mainStackSpacing)) {
             VStack(spacing: 20) {
                 HStack {
-                    Text("Name: \(userInfoViewModel.name)")
+                    Text("Name: \(userInfoViewModelProvider.userInfoViewModel.name)")
                 }
                 HStack {
-                    Text("Age: \(userInfoViewModel.age)")
+                    Text("Age: \(userInfoViewModelProvider.userInfoViewModel.age)")
                 }
             }
             .padding(userInfoLayout(\.userInfoBoxPadding))
@@ -91,8 +91,9 @@ struct UserInfoView: View {
 //            let vertPadding = layout(\.vertPadding)
 //            print("vertPadding: \(vertPadding)")
         }
+        // we don't bother making layout a probider thing for layout; it's static per device type
         .environmentObject(userInfoLayout)
-        .environmentObject(radioactivityViewModel)
+        .environmentObject(radioactivityViewModelProvider)
     }
 
     // temp -- just for now
@@ -114,9 +115,17 @@ extension UserInfoView {
     // to its main model object as a whole, then update
     // the SwiftUI model with the values. This way we don't
     // re-render if the SwiftUI model itself doesn't change any values.
-    class UserInfoViewModel: ObservableObject {
-        @Published var name: String
-        @Published var age: Int
+    class UserInfoViewModelProvider: ObservableObject {
+        @Published var userInfoViewModel: UserInfoViewModel
+
+        init(_ userInfoViewModel: UserInfoViewModel) {
+            self.userInfoViewModel = userInfoViewModel
+        }
+    }
+
+    struct UserInfoViewModel {
+        var name: String
+        var age: Int
 
         init(name: String, age: Int) {
             self.name = name
@@ -205,42 +214,46 @@ extension UIDevice {
         
         // demonstrate a state of the View
         Group {
-            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "Bob", age: 30)
-            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: true)
+            @ObservedObject var userInfoViewModelProvider = UserInfoView.UserInfoViewModelProvider(
+                UserInfoView.UserInfoViewModel(name: "Bob", age: 30)
+            )
+            @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
+                RadioactivityView.RadioactivityViewModel(isRadioactive: true)
+            )
 
             // Note how the viewModel is passed in via env, not via init.
             // This allows composition of views.
             UserInfoView()
-                .environmentObject(userInfoViewModel)
-                .environmentObject(radioactivityViewModel)
+                .environmentObject(userInfoViewModelProvider)
+                .environmentObject(radioactivityViewModelProvider)
         }
         Divider()
-        
-        // demonstrate a different state of the View
-        Group {
-            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "Alice", age: 41)
-            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
-
-            // Note how the viewModel is passed in via env, not via init.
-            // This allows composition of views.
-            UserInfoView()
-                .environmentObject(userInfoViewModel)
-                .environmentObject(radioactivityViewModel)
-        }
-        Divider()
-
-        // demonstrate the layout bounds of the view are appropriate (no excess padding; the
-        // red outline hugs the View content)
-        Group {
-            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "NAME", age: 0)
-            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
-
-            // Note how the viewModel is passed in via env, not via init.
-            // This allows composition of views.
-            UserInfoView()
-                .border(.red)
-                .environmentObject(userInfoViewModel)
-                .environmentObject(radioactivityViewModel)
-        }
+//        
+//        // demonstrate a different state of the View
+//        Group {
+//            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "Alice", age: 41)
+//            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+//
+//            // Note how the viewModel is passed in via env, not via init.
+//            // This allows composition of views.
+//            UserInfoView()
+//                .environmentObject(userInfoViewModel)
+//                .environmentObject(radioactivityViewModel)
+//        }
+//        Divider()
+//
+//        // demonstrate the layout bounds of the view are appropriate (no excess padding; the
+//        // red outline hugs the View content)
+//        Group {
+//            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "NAME", age: 0)
+//            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+//
+//            // Note how the viewModel is passed in via env, not via init.
+//            // This allows composition of views.
+//            UserInfoView()
+//                .border(.red)
+//                .environmentObject(userInfoViewModel)
+//                .environmentObject(radioactivityViewModel)
+//        }
     }
 }
