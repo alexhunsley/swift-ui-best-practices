@@ -22,15 +22,15 @@ import SwiftUI
 //
 // Call this xScreenView? To make it clear it's a top level thing.
 struct UserInfoView: View {
-    // IMPORTANT have your view name in this layout var name;
-    // It gets passed everywhere so we need to avoid clashes in sub-Views.
-    @StateObject var userInfoLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
-
     // VERY IMPORTANT that all these view model var names are qualified; do NOT just use 'viewModel'
     // because multiple models may in be in the @EnviromentObjects shared between Views.
     // (A change to any of these will trigger re-render, even if a change is only in a subview of this one.)
     @EnvironmentObject var userInfoViewModelProvider: UserInfoViewModelProvider
     @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
+
+    // IMPORTANT have your view name in this layout var name;
+    // It gets passed everywhere so we need to avoid clashes in sub-Views.
+    @StateObject var userInfoLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
 
     var body: some View {
         let _ = print("LOG_UserInfoView   Rendering body!")
@@ -68,17 +68,24 @@ struct UserInfoView: View {
 
 extension UserInfoView {
 
+    // ViewModel and ViewModelProvider are best inside the UserInfoView
+    // rather than dangling externally. If you want more convenient access,
+    // please use a typealias in your usage context, e.g:
+    //
+    //   typealias UserInfoViewModel = UserInfoView.UserInfoViewModel
+    //   typealias UserInfoViewModelProvider = UserInfoView.UserInfoViewModelProvider
+    //
     // the updateModel deduping requires Equatable
     struct UserInfoViewModel: Equatable {
         var name: String
         var age: Int
     }
 
-    // MainModel for this SwiftUI view. Or of course, the modelProvider protocol,
+    // The view model for this SwiftUI view. Or of course, the modelProvider protocol,
     // which avoids writing @Published on everything,
     // but which would update on absolutely everything
     // (defo an issue with what we do now!) -- this is
-    // another reasonn to not use main app models directly -
+    // another reason to not use main app models directly -
     // you possibly over-render your view -- anyhting changing
     // in the model struct changes its value, hence a rerender.
     //
@@ -94,8 +101,8 @@ extension UserInfoView {
             self.userInfoViewModel = userInfoViewModel
         }
 
-        // @Published sneds onChange events on assignment -- it doesn't care if it's
-        // the same value. So this dedupes.
+        // @Published sends onChange events on assignment -- it doesn't care if it's
+        // the same value. So this deduplicates values.
         func updateModel(_ newModel: UserInfoViewModel) {
             if newModel != userInfoViewModel {
                 userInfoViewModel = newModel

@@ -2,9 +2,8 @@ import SwiftUI
 
 // Example sub-component.
 struct RadioactivityView: View {
-
     @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
-
+    
     @StateObject var radioactivityLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
 
     typealias MetricType = CGFloat
@@ -52,7 +51,7 @@ extension RadioactivityView {
         }
 
         // @Published sends onChange events on assignment -- it doesn't care if it's
-        // the same value. So this dedupes.
+        // the same value. So this deduplicates values.
         func updateModel(_ newModel: RadioactivityViewModel) {
             if newModel.isRadioactive != radioactivityViewModel.isRadioactive {
                 radioactivityViewModel = newModel
