@@ -58,7 +58,8 @@ extension RadioactivityView {
         }
     }
 
-    struct RadioactivityViewModel {
+    // explicit Equatable here doesn't help
+    struct RadioactivityViewModel: Equatable {
         var isRadioactive: Bool
 
         init(isRadioactive: Bool) {

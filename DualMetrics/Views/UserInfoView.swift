@@ -123,7 +123,8 @@ extension UserInfoView {
         }
     }
 
-    struct UserInfoViewModel {
+    // explicit Equatable here doesn't help
+    struct UserInfoViewModel: Equatable {
         var name: String
         var age: Int
 
