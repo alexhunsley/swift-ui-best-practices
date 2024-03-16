@@ -48,8 +48,8 @@ struct UserInfoView: View {
 
 //    let layout = userInfoLayout
 
-    // VERY IMPORTANT this var qualifies what model. Do NOT use 'viewModel'. Less confusion
-    // this way, and We have to do this anyway as multiple models may in theory be in the enviroment.
+    // VERY IMPORTANT that all these view model var names are qualified; do NOT just use 'viewModel'm,
+    // because multiple models may in be in the @EnviromentObjects shared between Views.
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
     @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
 
@@ -121,32 +121,6 @@ extension UserInfoView {
     }
 }
 
-// example sub-component.
-// so we can test environemnt for picking up the metrics
-struct RadioactivityView: View {
-
-    @EnvironmentObject var layout: MetricsSelector<Metrics.Layout>
-    // this is available, but we don't need to use it in this View
-//    @EnvironmentObject var userInfoViewModel: UserInfoView.UserInfoViewModel
-    @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
-
-    var body: some View {
-        Text(radioactivityViewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
-            .frame(maxWidth: layout(\.subCompIndicatorWidth))
-            .background(radioactivityViewModel.isRadioactive ? .red : .green)
-    }
-}
-
-extension RadioactivityView {
-    class RadioactivityViewModel: ObservableObject {
-        @Published var isRadioactive: Bool
-
-        init(isRadioactive: Bool) {
-            self.isRadioactive = isRadioactive
-        }
-    }
-}
-
 // Metrics magic
 //extension ContentView {
     // I've simplified to remove the metric type from the generics,
@@ -175,6 +149,7 @@ extension RadioactivityView {
             let userInfoBoxPadding: MetricsStorage = [60.0, 20.0]
             // a single value used for both scren sizes
             let mainStackSpacing = 40.0
+            // now in sub-model
             let subCompIndicatorWidth: MetricsStorage = [250.0, 200.0]
         }
     }
