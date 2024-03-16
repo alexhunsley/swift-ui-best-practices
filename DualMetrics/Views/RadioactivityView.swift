@@ -1,25 +1,8 @@
-//
-//  RadioactivityView.swift
-//  DualMetrics
-//
-//  Created by Alex Hunsley on 16/03/2024.
-//
-
 import SwiftUI
 
-// ah. I think the issue is that I'm using the provider itself, and not just getting the struct out?
-
-
 // Example sub-component.
-// So we can test environemnt for picking up the metrics
 struct RadioactivityView: View {
 
-    // don't bother with this for now.
-//    @EnvironmentObject var userInfoLayout: MetricsSelector
-    
-    // this is available, but we don't need to use it in this View
-
-    //    @EnvironmentObject var userInfoViewModel: UserInfoView.UserInfoViewModel
     @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
 
     @StateObject var radioactivityLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
@@ -49,7 +32,6 @@ struct RadioactivityView: View {
 
         Text(viewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
             .frame(maxWidth: radioactivityLayout(\.subCompIndicatorWidth))
-        // TODO get the model from the provider!
             .background(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? .red : .green)
     }
 }
@@ -63,7 +45,7 @@ extension RadioactivityView {
             self.radioactivityViewModel = radioactivityViewModel
         }
 
-        // @Published sneds onChange events on assignment -- it doesn't care if it's
+        // @Published sends onChange events on assignment -- it doesn't care if it's
         // the same value. So this dedupes.
         func updateModel(_ newModel: RadioactivityViewModel) {
             if newModel.isRadioactive != radioactivityViewModel.isRadioactive {
@@ -72,7 +54,6 @@ extension RadioactivityView {
         }
     }
 
-    // explicit Equatable here doesn't help
     struct RadioactivityViewModel: Equatable {
         var isRadioactive: Bool
     }
@@ -91,11 +72,9 @@ extension RadioactivityView {
             @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
                 RadioactivityView.RadioactivityViewModel(isRadioactive: false)
             )
-//
-//            Text("Hi")
 
             // Note how the viewModel is passed in via env, not via init.
-            // This allows composition of views.
+            // This allows more easy composition of views further down with simpler interfaces.
             RadioactivityView()
                 .environmentObject(radioactivityViewModelProvider)
         }
@@ -107,11 +86,7 @@ extension RadioactivityView {
             @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
                 RadioactivityView.RadioactivityViewModel(isRadioactive: true)
             )
-//
-//            Text("Hi")
 
-            // Note how the viewModel is passed in via env, not via init.
-            // This allows composition of views.
             RadioactivityView()
                 .environmentObject(radioactivityViewModelProvider)
         }

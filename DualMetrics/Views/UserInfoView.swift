@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  DualMetrics
-//
-//  Created by Alex Hunsley on 12/03/2024.
-//
-
 import SwiftUI
 
 //be careful about applying all this to the SW app code!
@@ -26,54 +19,25 @@ import SwiftUI
 // should name indicate it's a view for full screen? hmm think not? But could be useful.
 // full screen views often have magic in them like nav, edge insets stuff etc, so I don't
 // think it's a bad thing.
-// Call this xScreenView?
+//
+// Call this xScreenView? To make it clear it's a top level thing.
 struct UserInfoView: View {
-    // top level View: make layout for the environment
-    // TODO get proper index
-    // Probably don't need state object here at all, actually! We don't care about that.
-    //@StateObject
-//    var layout = Metrics(index: UIDevice.current.isNotchedDevice ? 0 : 1).layout
-
-    // Must use a stateObject to be able to mutate.
     // IMPORTANT have your view name in this layout var name;
     // It gets passed everywhere so we need to avoid clashes in sub-Views.
-
-    // need to sort out this isNotched bit too!
     @StateObject var userInfoLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
-    // but we make this comp prop, it is convenient for using in this View.
-    // need a comp prop cos can't just use let (runs before self.init has run etc)
-    // (Do NOT use a lazy prop, it makes structs mutable and that adds annoyance elsewhere.)
-    // ahh come back to this later... slightly a pain.
-//    var layout: MetricsSelector<Layout> { userInfoLayout }
 
-//    let layout = userInfoLayout
-
-    // VERY IMPORTANT that all these view model var names are qualified; do NOT just use 'viewModel'm,
+    // VERY IMPORTANT that all these view model var names are qualified; do NOT just use 'viewModel'
     // because multiple models may in be in the @EnviromentObjects shared between Views.
     @EnvironmentObject var userInfoViewModelProvider: UserInfoViewModelProvider
     @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
 
     var body: some View {
         let _ = print("LOG_UserInfoView   Rendering body!")
-        // cam't see this log anywhere!
-//        let _ = Self._logChanges()
-        let _ = Self._printChanges()
+//        let _ = Self._printChanges()
 
         let userInfoViewModel = userInfoViewModelProvider.userInfoViewModel
-        let radioactivityViewModel = radioactivityViewModelProvider.radioactivityViewModel
 
-        //        let mets = Metrics(index: 0)
-//        let layout = mets.layout
-
-        // so we need to defer getting the actual layout for index until in the loopy bit.
-        // TODO use geometry proxy here, and call metrics.layout(forIndex: 0/1) here based on notched?
-//        let layout = Metrics.layout(forIndex: 0) // use notch!
-
-        // but how do I now set this on the environment below? Can only get hands on it in the body/geometryproxy.
-        // OK, need to pass around the metrics pre-Layout call... <<<---------------------------
-
-        // come back to fiddling with metrics later, you need to get most up to date code from waterfront app!
-        VStack { //}(spacing: layout(\.mainStackSpacing)) {
+        VStack {
             VStack(spacing: 20) {
                 HStack {
                     Text("Name: \(userInfoViewModel.name)")
@@ -101,11 +65,6 @@ struct UserInfoView: View {
         .environmentObject(userInfoLayout)
         .environmentObject(radioactivityViewModelProvider)
     }
-
-    // temp -- just for now
-//    var isNotchedDev: Bool {
-//        true
-//    }
 }
 
 extension UserInfoView {
@@ -206,10 +165,10 @@ extension UIDevice {
         guard #available(iOS 11.0, *), let window = UIApplication.shared.windows.filter({$0.isKeyWindow}).first else { return false }
 //        return true
         if UIDevice.current.orientation.isPortrait {
-            print("A: \(window.safeAreaInsets.top)")
+//            print("A: \(window.safeAreaInsets.top)")
             return window.safeAreaInsets.top >= 44
         } else {
-            print("B: \(window.safeAreaInsets.left) \(window.safeAreaInsets.right)")
+//            print("B: \(window.safeAreaInsets.left) \(window.safeAreaInsets.right)")
             return window.safeAreaInsets.left > 0 || window.safeAreaInsets.right > 0
         }
     }
