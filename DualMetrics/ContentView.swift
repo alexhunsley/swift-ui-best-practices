@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+//be careful about applying all this to the SW app code!
+// if things go awry, you will get blame for messing around too much etc!
+// -- maybe do changes post-release? or just for new stuff.
+
 //
 // [ ] get the index from the environment, which in turn comes from notch detection etc.
 // [ ] make our own padding variant (modifier) that takes a keypath.
@@ -31,11 +35,23 @@ struct UserInfoView: View {
 //    var layout = Metrics(index: UIDevice.current.isNotchedDevice ? 0 : 1).layout
 
     // do need stateObject, to be able to mutate!
-    @StateObject var layout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
+    // IMPORTANT quality this var name for your View.
+    // It gets passed everywhere so we need to avoid clashes in sub-Views.
+
+    // need to sort out this isNotched bit too!
+    @StateObject var userInfoLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
+    // but we make this comp prop, it is convenient for using in this View.
+    // need a comp prop cos can't just use let (runs before self.init has run etc)
+    // (Do NOT use a lazy prop, it makes structs mutable and that adds annoyance elsewhere.)
+    // ahh come back to this later... slightly a pain.
+//    var layout: MetricsSelector<Layout> { userInfoLayout }
+
+//    let layout = userInfoLayout
 
     // VERY IMPORTANT this var qualifies what model. Do NOT use 'viewModel'. Less confusion
     // this way, and We have to do this anyway as multiple models may in theory be in the enviroment.
     @EnvironmentObject var userInfoViewModel: UserInfoViewModel
+    @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
 
     var body: some View {
 //        let mets = Metrics(index: 0)
@@ -50,11 +66,6 @@ struct UserInfoView: View {
 
         // come back to fiddling with metrics later, you need to get most up to date code from waterfront app!
         VStack { //}(spacing: layout(\.mainStackSpacing)) {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-                .padding(20)
-
             VStack(spacing: 20) {
                 HStack {
                     Text("Name: \(userInfoViewModel.name)")
@@ -63,16 +74,21 @@ struct UserInfoView: View {
                     Text("Age: \(userInfoViewModel.age)")
                 }
             }
-            .padding(layout(\.userInfoBoxPadding))
+            .padding(userInfoLayout(\.userInfoBoxPadding))
             .border(.gray)
 
-            SubComponentView()
+            RadioactivityView()
+                // this environment object for the radioactivityViewModel *could*
+                // just get passed to everything, next to the .environmentObject at bottom,
+                // but this is somewhat nicer. But more error prone if you forget to put
+                // it somewhere!
+                .environmentObject(radioactivityViewModel)
         }
         .onAppear {
 //            let vertPadding = layout(\.vertPadding)
 //            print("vertPadding: \(vertPadding)")
         }
-        .environmentObject(layout)
+        .environmentObject(userInfoLayout)
     }
 
     // temp -- just for now
@@ -107,14 +123,27 @@ extension UserInfoView {
 
 // example sub-component.
 // so we can test environemnt for picking up the metrics
-struct SubComponentView: View {
+struct RadioactivityView: View {
 
     @EnvironmentObject var layout: MetricsSelector<Metrics.Layout>
+    // this is available, but we don't need to use it in this View
+//    @EnvironmentObject var userInfoViewModel: UserInfoView.UserInfoViewModel
+    @EnvironmentObject var radioactivityViewModel: RadioactivityView.RadioactivityViewModel
 
     var body: some View {
-        Text("Sub-component")
-            .padding(.horizontal, layout(\.subCompHorizPadding))
-            .background(.yellow)
+        Text(radioactivityViewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
+            .frame(maxWidth: layout(\.subCompIndicatorWidth))
+            .background(radioactivityViewModel.isRadioactive ? .red : .green)
+    }
+}
+
+extension RadioactivityView {
+    class RadioactivityViewModel: ObservableObject {
+        @Published var isRadioactive: Bool
+
+        init(isRadioactive: Bool) {
+            self.isRadioactive = isRadioactive
+        }
     }
 }
 
@@ -146,7 +175,7 @@ struct SubComponentView: View {
             let userInfoBoxPadding: MetricsStorage = [60.0, 20.0]
             // a single value used for both scren sizes
             let mainStackSpacing = 40.0
-            let subCompHorizPadding: MetricsStorage = [100.0, 50.0]
+            let subCompIndicatorWidth: MetricsStorage = [250.0, 200.0]
         }
     }
 
@@ -190,9 +219,49 @@ extension UIDevice {
 #Preview {
     // NB if using a main app complicated model from JSON for now,
     // we can hydrate from a sample JSON for mock server. TODO example!
-    @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "Bob", age: 30)
-    // Note how the viewModel is passed in via env, not via init.
-    // This allows composition of views.
-    return UserInfoView()
-        .environmentObject(userInfoViewModel)
+
+    // Note how we have a separate xViewModel for each component in this example.
+    // This would be the likely design if different engineers/teams were doing the two part.
+    return VStack(spacing: 20) {
+        
+        // demonstrate a state of the View
+        Group {
+            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "Bob", age: 30)
+            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: true)
+
+            // Note how the viewModel is passed in via env, not via init.
+            // This allows composition of views.
+            UserInfoView()
+                .environmentObject(userInfoViewModel)
+                .environmentObject(radioactivityViewModel)
+        }
+        Divider()
+        
+        // demonstrate a different state of the View
+        Group {
+            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "Alice", age: 41)
+            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+
+            // Note how the viewModel is passed in via env, not via init.
+            // This allows composition of views.
+            UserInfoView()
+                .environmentObject(userInfoViewModel)
+                .environmentObject(radioactivityViewModel)
+        }
+        Divider()
+
+        // demonstrate the layout bounds of the view are appropriate (no excess padding; the
+        // red outline hugs the View content)
+        Group {
+            @ObservedObject var userInfoViewModel = UserInfoView.UserInfoViewModel(name: "NAME", age: 0)
+            @ObservedObject var radioactivityViewModel = RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+
+            // Note how the viewModel is passed in via env, not via init.
+            // This allows composition of views.
+            UserInfoView()
+                .border(.red)
+                .environmentObject(userInfoViewModel)
+                .environmentObject(radioactivityViewModel)
+        }
+    }
 }
