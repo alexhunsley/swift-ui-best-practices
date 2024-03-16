@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9A29CB522BA5A68E00D38955 /* RadioactivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A29CB512BA5A68E00D38955 /* RadioactivityView.swift */; };
+		9AE0C3B32BA5FAA300E304AE /* DualMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE0C3B22BA5FAA300E304AE /* DualMetric.swift */; };
 		9AFEC3B62BA0F6AB00D10FE5 /* DualMetricsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B52BA0F6AB00D10FE5 /* DualMetricsApp.swift */; };
 		9AFEC3B82BA0F6AB00D10FE5 /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B72BA0F6AB00D10FE5 /* UserInfoView.swift */; };
 		9AFEC3BA2BA0F6AC00D10FE5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AFEC3B92BA0F6AC00D10FE5 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 
 /* Begin PBXFileReference section */
 		9A29CB512BA5A68E00D38955 /* RadioactivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioactivityView.swift; sourceTree = "<group>"; };
+		9AE0C3B22BA5FAA300E304AE /* DualMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualMetric.swift; sourceTree = "<group>"; };
 		9AFEC3B22BA0F6AB00D10FE5 /* DualMetrics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DualMetrics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AFEC3B52BA0F6AB00D10FE5 /* DualMetricsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualMetricsApp.swift; sourceTree = "<group>"; };
 		9AFEC3B72BA0F6AB00D10FE5 /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
@@ -37,10 +39,19 @@
 		9A29CB502BA5A64100D38955 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9AE0C3B12BA5FA9700E304AE /* Helpers */,
 				9AFEC3B72BA0F6AB00D10FE5 /* UserInfoView.swift */,
 				9A29CB512BA5A68E00D38955 /* RadioactivityView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		9AE0C3B12BA5FA9700E304AE /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				9AE0C3B22BA5FAA300E304AE /* DualMetric.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		9AFEC3A92BA0F6AB00D10FE5 = {
@@ -149,6 +160,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A29CB522BA5A68E00D38955 /* RadioactivityView.swift in Sources */,
+				9AE0C3B32BA5FAA300E304AE /* DualMetric.swift in Sources */,
 				9AFEC3B82BA0F6AB00D10FE5 /* UserInfoView.swift in Sources */,
 				9AFEC3B62BA0F6AB00D10FE5 /* DualMetricsApp.swift in Sources */,
 			);
