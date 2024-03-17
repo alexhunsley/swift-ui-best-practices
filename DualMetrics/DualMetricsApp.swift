@@ -17,7 +17,7 @@ import SwiftUI
 // that checks for new value.
 
 //
-// [ ] Bring in Metrics from SW app and compare -- have newer changes to SW app I think...
+// [x] DONE using new simpler way (Bring in Metrics from SW app and compare -- have newer changes to SW app I think...)
 // [ ] Look at the SW integration of Chloe's stuff - in particular, get providers for the two viewmodels being used.
 // [ ] look at getting Debanjan's stuff integrated now by doing a local-only merge of his work -- I don't expecct
 //       his interfaces to change much at this point, just internals.

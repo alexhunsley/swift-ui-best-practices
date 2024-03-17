@@ -30,7 +30,15 @@ struct UserInfoView: View {
 
     // IMPORTANT have your view name in this layout var name;
     // It gets passed everywhere so we need to avoid clashes in sub-Views.
-    @StateObject var userInfoLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
+//    @StateObject var userInfoLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
+    enum Metrics {
+        static let vertPadding = DualMetric(small: 20.0, default: 20.0)
+        static let userInfoBoxPadding = DualMetric(small: 20.0, default: 60.0)
+        // a single value used for both scren sizes
+        static let mainStackSpacing = 40.0
+        // now in sub-model
+        static let subCompIndicatorWidth = DualMetric(small: 200.0, default: 250.0)
+    }
 
     var body: some View {
         let _ = print("LOG_UserInfoView   Rendering body!")
@@ -38,31 +46,36 @@ struct UserInfoView: View {
 
         let userInfoViewModel = userInfoViewModelProvider.userInfoViewModel
 
-        VStack {
-            VStack(spacing: 20) {
-                HStack {
-                    Text("Name: \(userInfoViewModel.name)")
-                }
-                HStack {
-                    Text("Age: \(userInfoViewModel.age)")
-                }
-            }
-            .padding(userInfoLayout(\.userInfoBoxPadding))
-            .border(.gray)
+        GeometryReader { proxy in
+            let isLargeDesign = proxy.isNotchedDevice
 
-            RadioactivityView()
-            // We just pass our env modelViews to *everything* (see further down).
-            // Can't forget, this way.
-            //                .environmentObject(radioactivityViewModel)
+            VStack {
+                VStack(spacing: 20) {
+                    HStack {
+                        Text("Name: \(userInfoViewModel.name)")
+                    }
+                    HStack {
+                        Text("Age: \(userInfoViewModel.age)")
+                    }
+                }
+                .padding(Metrics.userInfoBoxPadding(isLargeDesign))
+                .border(.gray)
+
+                RadioactivityView(isLargeDesign: true)
+                // We just pass our env modelViews to *everything* (see further down).
+                // Can't forget, this way.
+                //                .environmentObject(radioactivityViewModel)
+            }
+            .frame(width: proxy.size.width)
+            .onAppear {
+                //            print("LOG_UserInfoView  in userView, userInfoViewModel.name = \(userInfoViewModel.name)")
+                //            let vertPadding = layout(\.vertPadding)
+                //            print("vertPadding: \(vertPadding)")
+            }
+            // we don't bother making layout a provider thing for layout; it's static per device type
+//            .environmentObject(userInfoLayout)
+            .environmentObject(radioactivityViewModelProvider)
         }
-        .onAppear {
-//            print("LOG_UserInfoView  in userView, userInfoViewModel.name = \(userInfoViewModel.name)")
-//            let vertPadding = layout(\.vertPadding)
-//            print("vertPadding: \(vertPadding)")
-        }
-        // we don't bother making layout a provider thing for layout; it's static per device type
-        .environmentObject(userInfoLayout)
-        .environmentObject(radioactivityViewModelProvider)
     }
 }
 
@@ -107,77 +120,6 @@ extension UserInfoView {
             if newModel != userInfoViewModel {
                 userInfoViewModel = newModel
             }
-        }
-    }
-}
-
-// Metrics magic
-//extension ContentView {
-    // I've simplified to remove the metric type from the generics,
-    // as I thik CGFloat is fine. We're not likely to have e.g. different
-    // Colors for screen classes.
-    // But I suppose CGSize could be v useful (but we'd get by without, for now).
-    typealias MetricType = CGFloat
-    // The metric array is ordered as [default size, small size].
-    // This is so that the items at index 0 and 1 are always the same
-    // thing, even when we only have an array of 1 metric.
-    typealias MetricsStorage = [MetricType]
-
-    struct Metrics {
-//        let layout: MetricsSelector<Layout>
-
-//        init(index: Int) {
-//            layout = .init(metrics: Metrics.Layout(), index: index)
-//        }
-
-        static func layout(forIndex index: Int) -> MetricsSelector<Layout> {
-            MetricsSelector(metrics: Metrics.Layout(), index: index)
-        }
-
-        struct Layout {
-            let vertPadding: MetricsStorage = [60.0, 20.0]
-            let userInfoBoxPadding: MetricsStorage = [60.0, 20.0]
-            // a single value used for both scren sizes
-            let mainStackSpacing = 40.0
-            // now in sub-model
-            let subCompIndicatorWidth: MetricsStorage = [250.0, 200.0]
-        }
-    }
-
-    // We must use a class because we have to be ObservableObject
-    // per requirements for using Environment.
-    // This class is not inteneded to update layout dyamically, though,
-    // so we don't need any published properties
-    // M = metric type
-    class MetricsSelector<M>: ObservableObject {
-        let metrics: M
-        let index: Int
-
-        init(metrics: M, index: Int) {
-            self.metrics = metrics
-            self.index = index
-        }
-
-        func callAsFunction(_ keyPath: KeyPath<M, MetricsStorage>) -> MetricType {
-            let metricsForKeypath = metrics[keyPath: keyPath] //[index]
-            let selectedIndex = index < metricsForKeypath.count ? index : 0
-            return metricsForKeypath[selectedIndex]
-        }
-    }
-//}
-
-extension UIDevice {
-    /// Returns `true` if the device has a notch
-    static var isNotchedDevice: Bool {
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        guard #available(iOS 11.0, *), let window = windowScene?.windows.filter({$0.isKeyWindow}).first else { return false }
-//        return true
-        if UIDevice.current.orientation.isPortrait {
-//            print("A: \(window.safeAreaInsets.top)")
-            return window.safeAreaInsets.top >= 44
-        } else {
-//            print("B: \(window.safeAreaInsets.left) \(window.safeAreaInsets.right)")
-            return window.safeAreaInsets.left > 0 || window.safeAreaInsets.right > 0
         }
     }
 }

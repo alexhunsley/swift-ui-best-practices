@@ -1,37 +1,65 @@
 import SwiftUI
 
+//struct IsLargeDesignPreferenceKey: PreferenceKey {
+//    static var defaultValue: Bool = false
+//
+//    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+//        value = nextValue()
+//    }
+//}
+
 // Example sub-component.
 struct RadioactivityView: View {
     @EnvironmentObject var radioactivityViewModelProvider: RadioactivityView.RadioactivityViewModelProvider
     
-    @StateObject var radioactivityLayout: MetricsSelector = Metrics.layout(forIndex: UIDevice.isNotchedDevice ? 0 : 1)
-
-    typealias MetricType = CGFloat
-    // The metric array is ordered as [default size, small size].
-    // This is so that the items at index 0 and 1 are always the same
-    // thing, even when we only have an array of 1 metric.
-    typealias MetricsStorage = [MetricType]
-
     // MARK: - Metrics
-    
-    struct Metrics {
-        struct Layout {
-            let subCompIndicatorWidth: MetricsStorage = [250.0, 200.0]
-        }
-
-        static func layout(forIndex index: Int) -> MetricsSelector<Layout> {
-            MetricsSelector(metrics: Metrics.Layout(), index: index)
-        }
+    enum Metrics {
+        static let subCompIndicatorWidth = DualMetric(small: 200.0, default: 250.0)
     }
 
     // MARK: - Body
 
+    var isLargeDesign: Bool //IsLargeDesignPreferenceKey
+
     var body: some View {
         let viewModel = radioactivityViewModelProvider.radioactivityViewModel
 
-        Text(viewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
-            .frame(maxWidth: radioactivityLayout(\.subCompIndicatorWidth))
-            .background(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? .red : .green)
+//        var isLargeDesign = UIDevice.current.hasNotch
+
+        // GeometryReader a bit of a mare.
+        // Alternatives?
+        // good info on GR:
+        // https://stackoverflow.com/a/65547384
+        //
+        //    https://swiftwithmajid.com/2020/11/04/how-to-use-geometryreader-without-breaking-swiftui-layout/
+        //
+        // PrefernceKeu possible! Can write a bool from the backgeround idea below (commented out)
+        // https://medium.com/@manojaher/mastering-swiftui-a-deep-dive-into-preferencekey-82ccb43ab9de
+        // just keep with this for now. One for another time.
+//        GeometryReader { proxy in
+//            let isLargeDesign = proxy.isNotchedDevice
+//            let isLargeDesign = true
+            VStack {
+                // why the as String needed?
+//                Text("It is \(isLargeDesign)" as String)
+
+                Text(viewModel.isRadioactive ? "RADIOACTIVE" : "CLEAR")
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: Metrics.subCompIndicatorWidth(isLargeDesign))
+                    .background(radioactivityViewModelProvider.radioactivityViewModel.isRadioactive ? .red : .green)
+            }
+//            .background(
+//                GeometryReader { geometry in
+//        // need to add a PrefernceKey for this. see e.g. https://medium.com/@manojaher/mastering-swiftui-a-deep-dive-into-preferencekey-82ccb43ab9de
+//                    isLargeDesign.preference(true)
+//                }
+//            )
+//            .overlay(GeometryReader { geometry in
+//                //geometry.isNotchedDevice
+//            })
+
+//            .frame(maxWidth: proxy.size.width) //, maxHeight: proxy.size.height)
+//       }
     }
 }
 
@@ -69,27 +97,28 @@ extension RadioactivityView {
     return VStack(spacing: 20) {
 
         // demonstrate a state of the View
-        Group {
+        // removing Groups doesn't help the layout weirdness
+//        Group {
             @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
-                RadioactivityView.RadioactivityViewModel(isRadioactive: false)
+                    RadioactivityView.RadioactivityViewModel(isRadioactive: false)
             )
 
             // Note how the viewModel is passed in via env, not via init.
             // This allows more easy composition of views further down with simpler interfaces.
-            RadioactivityView()
+        RadioactivityView(isLargeDesign: true)
                 .environmentObject(radioactivityViewModelProvider)
-        }
+//        }
         Divider()
 
         // demonstrate a different state of the View
 
-        Group {
-            @ObservedObject var radioactivityViewModelProvider = RadioactivityView.RadioactivityViewModelProvider(
-                RadioactivityView.RadioactivityViewModel(isRadioactive: true)
+//        Group {
+            @ObservedObject var radioactivityViewModelProvider2 = RadioactivityView.RadioactivityViewModelProvider(
+                    RadioactivityView.RadioactivityViewModel(isRadioactive: true)
             )
 
-            RadioactivityView()
-                .environmentObject(radioactivityViewModelProvider)
-        }
+        RadioactivityView(isLargeDesign: true)
+                .environmentObject(radioactivityViewModelProvider2)
+//        }
     }
 }
